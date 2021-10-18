@@ -20,48 +20,46 @@ from utils import get_filter_results, get_file_details, is_subscribed, get_poste
 #Force Subscribe
 Client = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
 
-    @Client.on_message(filters.command("start"))
-    async def start(bot, cmd):
-    usr_cmdall1 = cmd.text
-    if usr_cmdall1.startswith("/start subinps"):
-        if AUTH_CHANNEL:
-            invite_link = await bot.create_chat_invite_link(int(AUTH_CHANNEL))
-            try:
-                user = await bot.get_chat_member(int(AUTH_CHANNEL), cmd.from_user.id)
-                if user.status == "kicked":
-                    await bot.send_message(
-                        chat_id=cmd.from_user.id,
-                        text="Sorry Sir, You are Banned to use me.",
-                        parse_mode="markdown",
-                        disable_web_page_preview=True
-                    )
-                    return
-            except UserNotParticipant:
-                ident, file_id = cmd.text.split("_-_-_-_")
-                await bot.send_message(
-                    chat_id=cmd.from_user.id,
-                    text="**Please Join the Channel and click 'Try Again' to use this Bot!**",
-                    reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton("⭕ 𝐎𝐔𝐑 𝐂𝐇𝐀𝐍𝐍𝐄𝐋 𝐋𝐈𝐍𝐊𝐒 ⭕", url=invite_link.invite_link)
-                            ],
-                            [
-                                InlineKeyboardButton(" 🔄 Try Again", callback_data=f"checksub#{file_id}")
-                            ]
-                        ]
-                    ),
-                    parse_mode="markdown"
-                )
-                return
-            except Exception:
-                await bot.send_message(
-                    chat_id=cmd.from_user.id,
-                    text="Something went Wrong.",
+BUTTONS = {}
+BOT = {}
+@Client.on_message(filters.text & filters.private & filters.incoming & filters.user(AUTH_USERS) if AUTH_USERS else filters.text & filters.private & filters.incoming)
+async def filter(client, message):
+    if message.text.startswith("/"):
+        return
+    if AUTH_CHANNEL:
+        invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
+        try:
+            user = await client.get_chat_member(int(AUTH_CHANNEL), message.from_user.id)
+            if user.status == "kicked":
+                await client.send_message(
+                    chat_id=message.from_user.id,
+                    text="Sorry Sir, You are Banned to use me.",
                     parse_mode="markdown",
                     disable_web_page_preview=True
                 )
                 return
+        except UserNotParticipant:
+            await client.send_message(
+                chat_id=message.from_user.id,
+                text="**Please Join the Channel and click 'Try Again' to use this Bot!**",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("⭕ 𝐎𝐔𝐑 𝐂𝐇𝐀𝐍𝐍𝐄𝐋 𝐋𝐈𝐍𝐊𝐒 ⭕", url=invite_link.invite_link)
+                        ]
+                    ]
+                ),
+                parse_mode="markdown"
+            )
+            return
+        except Exception:
+            await client.send_message(
+                chat_id=message.from_user.id,
+                text="Something went Wrong.",
+                parse_mode="markdown",
+                disable_web_page_preview=True
+            )
+            return
 
 ##########################################
 
