@@ -23,13 +23,13 @@
         },
         "API_HASH" : {
             "description" : "Get From https://my.telegram.org"
-        }
+        },
         "AUTH_CHANNEL" : {
             "description" : "FORCE_SUBSCRIBE Channel ID (Bot must be admin !)"
-        }
+        },
         "AUTH_USERS" : {
             "description" : "Your User ID"
-        }
+        },
     },
     "stack" : "heroku-20",
     "buildpacks" : [
