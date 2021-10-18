@@ -16,7 +16,6 @@ Developer HYBRID VAMPIRE.
 Click Below Button to Deploy your Bot.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/zainulhibath/URL-Uploader-Bot)
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2Fzainulhibath%2FURL-Uploader-Bot&envs=BOT_TOKEN%2CAPI_ID%2CAPI_HASH&BOT_TOKENDesc=Get+From+https%3A%2F%2Ft.me%2FBotFather&API_IDDesc=Get+From+https%3A%2F%2Fmy.telegram.org&API_HASHDesc=Get+From+https%3A%2F%2Fmy.telegram.org&referralCode=X1yxIl)
 
 ## Support Telegram Group and Channel
 
