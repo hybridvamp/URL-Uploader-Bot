@@ -11,65 +11,7 @@ from pyromod import listen
 from asyncio import TimeoutError
 from pyrogram import Client, filters, idle
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery, User
-from pyrogram.errors import UserNotParticipant
-from info import AUTH_CHANNEL, AUTH_USERS
-import re
-from pyrogram.errors import UserNotParticipant
-##from object_detection.utils import get_filter_results, get_file_details, is_subscribed, get_poster
 
-#Force Subscribe
-hybrid = Client(
-     os.environ.get("SESSION_NAME", "No-Forward-Messages"),
-     bot_token = os.environ.get("BOT_TOKEN", ""),
-     api_id = os.environ.get("API_ID", ""),
-     api_hash = os.environ.get("API_HASH", "")
-)
-
-hybrid = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
-
-BUTTONS = {}
-BOT = {}
-
-@hybrid.on_message(filters.text & filters.private & filters.incoming & filters.user(AUTH_USERS) if AUTH_USERS else filters.text & filters.private & filters.incoming)
-async def filter(client, message):
-    if message.text.startswith("/"):
-        return
-    if AUTH_CHANNEL:
-        invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
-        try:
-            user = await client.get_chat_member(int(AUTH_CHANNEL), message.from_user.id)
-            if user.status == "kicked":
-                await client.send_message(
-                    chat_id=message.from_user.id,
-                    text="Sorry Sir, You are Banned to use me.",
-                    parse_mode="markdown",
-                    disable_web_page_preview=True
-                )
-                return
-        except UserNotParticipant:
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text="**Please Join the Channel and click 'Try Again' to use this Bot!**",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton("⭕ 𝐎𝐔𝐑 𝐂𝐇𝐀𝐍𝐍𝐄𝐋 𝐋𝐈𝐍𝐊𝐒 ⭕", url=invite_link.invite_link)
-                        ]
-                    ]
-                ),
-                parse_mode="markdown"
-            )
-            return
-        except Exception:
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text="Something went Wrong.",
-                parse_mode="markdown",
-                disable_web_page_preview=True
-            )
-            return
-
-##########################################
 
 '''Login as a Bot'''
 bot = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
