@@ -18,9 +18,10 @@ from pyrogram.errors import UserNotParticipant
 from utils import get_filter_results, get_file_details, is_subscribed, get_poster
 
 #Force Subscribe
+Client = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
 
     @Client.on_message(filters.command("start"))
-async def start(bot, cmd):
+    async def start(bot, cmd):
     usr_cmdall1 = cmd.text
     if usr_cmdall1.startswith("/start subinps"):
         if AUTH_CHANNEL:
