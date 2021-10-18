@@ -12,7 +12,7 @@ from asyncio import TimeoutError
 from pyrogram import Client, filters, idle
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery, User
 from pyrogram.errors import UserNotParticipant
-from info import AUTH_CHANNEL
+from info import AUTH_CHANNEL, AUTH_USERS
 import re
 from pyrogram.errors import UserNotParticipant
 from utils import get_filter_results, get_file_details, is_subscribed, get_poster
