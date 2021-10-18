@@ -29,7 +29,7 @@
         },
         "AUTH_USERS" : {
             "description" : "Your User ID"
-        },
+        }
     },
     "stack" : "heroku-20",
     "buildpacks" : [
