@@ -18,11 +18,19 @@ from pyrogram.errors import UserNotParticipant
 ##from object_detection.utils import get_filter_results, get_file_details, is_subscribed, get_poster
 
 #Force Subscribe
-Client = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
+hybrid = Client(
+     os.environ.get("SESSION_NAME", "No-Forward-Messages"),
+     bot_token = os.environ.get("BOT_TOKEN", ""),
+     api_id = os.environ.get("API_ID", ""),
+     api_hash = os.environ.get("API_HASH", "")
+)
+
+##hybrid = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
 
 BUTTONS = {}
 BOT = {}
-@Client.on_message(filters.text & filters.private & filters.incoming & filters.user(AUTH_USERS) if AUTH_USERS else filters.text & filters.private & filters.incoming)
+
+@hybrid.on_message(filters.text & filters.private & filters.incoming & filters.user(AUTH_USERS) if AUTH_USERS else filters.text & filters.private & filters.incoming)
 async def filter(client, message):
     if message.text.startswith("/"):
         return
