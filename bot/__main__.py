@@ -25,7 +25,7 @@ hybrid = Client(
      api_hash = os.environ.get("API_HASH", "")
 )
 
-##hybrid = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
+hybrid = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
 
 BUTTONS = {}
 BOT = {}
