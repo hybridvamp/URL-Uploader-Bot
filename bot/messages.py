@@ -14,12 +14,16 @@ task_ongoing = "<u>One Task is already going on, So Please Try Again Later.</u>"
 
 processing_url = "<i>Please wait while I am Processing File</i>"
 
-starting_to_download = "<i>Starting to Upload the file.... Have Some Patience!!!</i>"
+starting_to_download = "<i>Starting to download the file.... Have Some Patience!!!</i>"
 
 unsuccessful_upload = f'Uploading went <b>Unsuccessful</b>, Something Went Wrong{common_text}'
 
 uploading_msg = "<b>File successfully downloaded to server, Now uploading to Drive.</b>"
 
 file_limit = f"Send only those whose size is less than 400mb.{common_text}"
+
+download_error = "Unable to download this file, check your link"
+
+limit_exceeded = "ERROR: Unable to download this file. \n\nReason: This file is too big"
 
 youtube_url = "<b>Currently I do not support youtube videos.</b>"
