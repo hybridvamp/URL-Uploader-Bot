@@ -3,8 +3,10 @@
 
 '''Impoting Libraries, Modules & Credentials'''
 from os import listdir, linesep
-from subprocess import Popen, PIPE
 from re import match
+import aiofiles
+from time import time
+from aiohttp import ClientSession
 from bot.messages import *
 from bot.plugins.funcs import *
 
@@ -14,6 +16,7 @@ class Downloader:
         self.event = event
         self.url = url
         self.bot = bot
+        self.headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'}
     
     @classmethod
     async def start(cls, event, url, bot):
@@ -26,48 +29,45 @@ class Downloader:
         return self
 
     async def url_downloader(self, event, process_msg, bot, url):
-        task("Running")
 
-        len_file = await length_of_file(url)
-        if len_file == 'Valid':
-            msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
-            userid = event.sender_id
-            files_before = listdir()
+        msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
+        userid = event.sender_id
+        files_before = listdir()
 
-            #Downloading File From Url
-            process = Popen(['wget', url], stderr=PIPE)
-            started = False
-            for line in process.stderr:
-                line = line.decode("utf-8", "replace")
-                print(line)
-                if started:
-                    splited = line.split()
-                    if len(splited) == 9:
-                        completed = splited[0]
-                        if completed.endswith('K'):
-                            completed = str(round(int(completed[:len(completed)-1])/1024, 2))+'M'
-                        percentage = splited[6]
-                        speed = splited[7]
-                        remaining = splited[8]
-                        msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n📊Percentage: {percentage}\n✅Completed: {completed+'B'}\n🚀Speed: {speed}B/s\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
-                elif line == linesep:
-                    started = True
-            else:
-                files_after = listdir()
-                try:
-                    filename = str([i for i in files_after if i not in files_before][0])
-                except IndexError:  #When File Not Downloaded
-                    task("No Task")
-                    await bot.delete_messages(None, msg)
-                    await bot.send_message(userid, unsuccessful_upload, parse_mode = 'html')
+        #Downloading File From Url
+        
+        file_name = url.split("filename=")[-1].split("name=")[-1].split("title=")[-1].split("&")[0].split('/')[-1].split('?')[0].split("&")[0]
+        
+        start_time = time()
+        current_size = 0
+        msg = await bot.edit_message(msg, "<b>Downloading... !! Keep patience...")
+        self.n_msg = msg
+        
+        async with ClientSession() as session:
+            async with session.get(url, headers=self.headers) as resp:
+                if resp.status == 200:
+                    
+                    file_size = int(resp.headers.get("Content-Length")) if resp.headers.get("Content-Length") else 0
+                    if file_size > 1219430400: msg = await bot.edit_message(limit_exceeded); self.n_msg, self.filename = self.n_msg, None
+                    
+                    async with aiofiles.open(file_name, "wb") as f:
+                        while True:
+                            chunk = await resp.content.read(32768)
+                            current_size += len(chunk)
+                            diff = time()-start_time
+                            if file_size > 0 and round(diff % 10.00) == 0:
+                                percentage = current_size * 100 / file_size
+                                speed = humanbytes(current_size / diff)
+                                
+                                msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n📊Percentage: {round(percentage, 2)}%\n✅Completed: {round(current_size / 1024 / 1024, 2)} MB\n🚀Speed: {speed}\n</b>", parse_mode = 'html')
+                            
+                            if not chunk: break
+                            await f.write(chunk)
+                         
+                        n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
+                        self.n_msg, self.filename = n_msg, file_name
+                        return True
+                
                 else:
-                    n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
-                    self.n_msg, self.filename = n_msg, filename
-                    return True
-        elif len_file == 'Not Valid':
-            await bot.edit_message(process_msg, unsuccessful_upload, parse_mode = 'html')
-        else:
-            await bot.edit_message(process_msg, f'This filesize is **{len_file}mb**. {file_limit}', parse_mode = 'html')
-        self.filename = None
-        task("No Task")
-        return None
+                    self.n_msg, self.filename = self.n_msg, None
+                    return 
