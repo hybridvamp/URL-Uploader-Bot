@@ -7,8 +7,8 @@
 import os
 
 
-bot_token = "2035845229:AAF4YJev0KQ8C3qA9uifw3PCSFt7u4kJgmo"
+bot_token = os.environ["BOT_TOKEN"]
 
-api_id = "3881325"
+api_id = os.environ["API_ID"]
 
-api_hash = "1ebf12e67222683abe1c01f0209b79df"
+api_hash = os.environ["API_HASH"]
