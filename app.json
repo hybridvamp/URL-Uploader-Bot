@@ -12,7 +12,7 @@
         "url",
         "uploader"
     ],
-    "repository" : "https://github.com/zainulhibath/URL_Uploader_Bot",
+    "repository" : "https://github.com/AnasKhalid09/BlankKiller",
     "success_url" : "https://t.me/URL_Uploader_HYBRID_Bot",
     "env" : {
         "BOT_TOKEN" : {
