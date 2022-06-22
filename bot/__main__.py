@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 '''Impoting Libraries, Modules & Credentials'''
 from telethon import events
 from telethon.sync import TelegramClient
@@ -9,9 +8,6 @@ from bot.plugins.downloader import *
 from bot.messages import *
 from pyromod import listen
 from asyncio import TimeoutError
-from pyrogram import Client, filters, idle
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery, User
-
 
 '''Login as a Bot'''
 bot = TelegramClient('URL_Uploader', api_id, api_hash).start(bot_token = bot_token)
@@ -32,30 +28,28 @@ async def help_handler(event):
 async def upload_handler(event):
 
     message_info = event.message
-
-    if str(type(message_info.entities[0])) == "<class 'telethon.tl.types.MessageEntityUrl'>":
-        if task() == "Running":
-            await event.respond(task_ongoing, parse_mode = 'html')
+    if message_info.entities and str(type(message_info.entities[0])) == "<class 'telethon.tl.types.MessageEntityUrl'>":
+        url = message_info.text
+        downloader = await Downloader.start(event, url, bot)
+        filename = downloader.filename
+        msg = downloader.n_msg
+        
+        if filename:    #Sending file to user
+            message = event.message
+            userid = event.sender_id
+            try:
+                await bot.send_file(userid , file = filename, reply_to = message)
+            except Exception as e:
+                await bot.delete_messages(None, msg)
+                await bot.send_message(userid, unsuccessful_upload, reply_to = message)
+                print(line_number(), e)
+            else:
+                await bot.delete_messages(None, msg)
+            finally:
+                remove(filename)
         else:
-            url = message_info.text
-            downloader = await Downloader.start(event, url, bot)
-            filename = downloader.filename
-
-            if filename:    #Sending file to user
-                msg = downloader.n_msg
-                message = event.message
-                userid = event.sender_id
-                try:
-                    await bot.send_file(userid , file = filename, reply_to = message)
-                except Exception as e:
-                    await bot.delete_messages(None, msg)
-                    await bot.send_message(userid, unsuccessful_upload, reply_to = message)
-                    print(line_number(), e)
-                else:
-                    await bot.delete_messages(None, msg)
-                finally:
-                    remove(filename)
-            task("No Task")
+            await bot.edit_message(msg, download_error)
+          
     return None
 
 
