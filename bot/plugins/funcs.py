@@ -2,6 +2,7 @@
 from bot.credentials import *
 from inspect import currentframe
 from os import path
+from math import log2
 from requests import head
 import __main__
 
@@ -11,22 +12,13 @@ import __main__
 def line_number():
     cf = currentframe()
     return f'In File {path.basename(__main__.__file__)} at line {cf.f_back.f_lineno}'
-
-#it will check the length of file
-async def length_of_file(url):
-    try:
-        h = head(url, allow_redirects=True)
-        header = h.headers
-        content_length = int(header.get('content-length'))
-        file_length = int(content_length/1048576)     #Getting Length of File
-        if content_length > 1219430400:  #File`s Size is more than Limit 
-            return file_length
-        else:   #File`s Size is in the Limit
-            return 'Valid'
-    except Exception as e:  #File is not Exist in Given URL
-        print(e)
-        return 'Not Valid'
-
+    
+def humanbytes(size):
+    if not size: return ""
+    _suffixes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    order = int(log2(size) / 10) if size else 0
+    return '{:.4g} {}'.format(round(size / (1 << (order * 10)), 1), _suffixes[order])
+    
 #Task Updating or Status Checking
 def task(status=None):
     if status:
